@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  plussum:
+    image: plussum
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000
