@@ -1,0 +1,393 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="This is Web App for data science and analytics">
+    <meta name="author" content="Top Developer">
+
+    <title>PlusSum Web App</title>
+    {% load static %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">PlusSum</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin" target="_blank">Admin Site </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="container">
+        <div class="row mt-2">
+            <h3>Please Select Company and Year</h3>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-5 px-4">
+                <div class="form-group">
+                    <label for="company" class="col-form-label">Company:</label>
+                    <select class="form-control" id="company">
+                        {% for choice in company_choices %}
+                        <option value="{{choice.company}}">{{choice.company}}</option>
+                        {% endfor %}
+                    </select>
+                    <small id="companyHelp" class="form-text text-muted">Select company you want to choose.</small>
+                </div>
+            </div>
+            <div class="col-md-5 px-4">
+                <div class="form-group">
+                    <label for="company" class="col-form-label">Year:</label>
+                    <select class="form-control" id="year">
+                        {% for choice in year_choices %}
+                        <option value="{{choice.year}}">{{choice.year}}</option>
+                        {% endfor %}
+                    </select>
+                    <small id="yearHelp" class="form-text text-muted">Select year you want to choose.</small>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h1>Graphs</h1>
+            </div>
+            <div class="col-md-6 mt-2">
+                <canvas id="spyderChart" width="200" height="200"></canvas>
+            </div>
+            <div class="col-md-6 mt-2">
+                <canvas id="lineChart" width="200" height="200"></canvas>
+            </div>
+            <div class="col-md-6 mt-2">
+                <canvas id="distributionChart" width="200" height="200"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/chart.min.js' %}"></script>
+    <script src="{% static 'js/utils.js' %}"></script>
+
+    <script>
+        
+        $(document).ready(function(){
+            init()
+            function drawSpyderGraph(data){
+                var data = {
+                    labels: ['PS','LA','PL','SA'],
+                    datasets: [{
+                        backgroundColor: '#4dc9f6',
+                        borderColor: '#ffff',
+                        data: data,
+                        label: 'Prices'
+                    }]
+                };          
+                var options = {
+                    title: {
+                        display: true,
+                        text: 'Item prices'
+                    },
+                    maintainAspectRatio: true,
+                    legend: {
+                        position: 'bottom',
+                    },
+                    spanGaps: false,
+                    elements: {
+                        line: {
+                            tension: 0.000001
+                        }
+                    },
+                    plugins: {
+                        filler: {
+                            propagate: false
+                        },
+                        'samples-filler-analyser': {
+                            target: 'chart-analyser'
+                        }
+                    }
+                };    
+                var chart = new Chart('spyderChart', {
+                    type: 'radar',
+                    data: data,
+                    options: options
+                });
+                
+            }
+
+            function drawLineGraph(data){
+                var dataSet1 = [];
+                var dataSet2 = [];
+                var dataSet3 = [];
+                var dataSet4 = [];
+                var labelSet = [];
+                data.forEach(element => {
+                    dataSet1.push(element.calc[0]);
+                    dataSet2.push(element.calc[1]);
+                    dataSet3.push(element.calc[2]);
+                    dataSet4.push(element.calc[3]);
+                    labelSet.push(element.year);
+                });
+
+
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: labelSet,
+                        datasets: [{
+                            label: 'PS',
+                            backgroundColor: window.chartColors.red,
+                            borderColor: window.chartColors.red,
+                            data: dataSet1,
+                            fill: false,
+                            lineTension: 0
+                        }, {
+                            label: 'LA',
+                            fill: false,
+                            backgroundColor: window.chartColors.blue,
+                            borderColor: window.chartColors.blue,
+                            data:dataSet2,
+                            lineTension: 0
+                        }, {
+                            label: 'PL',
+                            fill: false,
+                            backgroundColor: window.chartColors.yellow,
+                            borderColor: window.chartColors.yellow,
+                            data:dataSet3,
+                            lineTension: 0
+                        }, {
+                            label: 'SA',
+                            fill: false,
+                            backgroundColor: window.chartColors.green,
+                            borderColor: window.chartColors.green,
+                            data:dataSet4,
+                            lineTension: 0
+                        }
+                    ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'bottom',
+    					},
+                        title: {
+                            display: true,
+                            text: 'Item prices by year'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Year'
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Price'
+                                }
+                            }]
+                        }
+                    }
+                };
+
+                var ctx = document.getElementById('lineChart').getContext('2d');
+                window.myLine = new Chart(ctx, config);
+                window.myLine.update();
+            }
+
+
+            function drawDistributionGraph(data){
+                var dataSet1 = [];
+                var dataSet2 = [];
+                var dataSet3 = [];
+                var dataSet4 = [];
+                var labelSet = [];
+                var disSet = [];
+                var year = $("#year").val();
+
+                data.forEach(element => {
+                    dataSet1.push(element.calc[0]);
+                    dataSet2.push(element.calc[1]);
+                    dataSet3.push(element.calc[2]);
+                    dataSet4.push(element.calc[3]);
+                    labelSet.push(element.year);
+                    if(Number(year) == element.year){
+                        disSet.push(element.calc[0]);
+                        disSet.push(element.calc[1]);
+                        disSet.push(element.calc[2]);
+                        disSet.push(element.calc[3]);
+                    }
+                });
+
+
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: labelSet,
+                        datasets: [{
+                            label: 'PS',
+                            backgroundColor: window.chartColors.black,
+                            borderColor: window.chartColors.black,
+                            data: dataSet1,
+                            fill: false,
+                        }, {
+                            label: 'LA',
+                            fill: false,
+                            backgroundColor: window.chartColors.black,
+                            borderColor: window.chartColors.black,
+                            data:dataSet2,
+                        }, {
+                            label: 'PL',
+                            fill: false,
+                            backgroundColor: window.chartColors.black,
+                            borderColor: window.chartColors.black,
+                            data:dataSet3,
+                        }, {
+                            label: 'SA',
+                            fill: false,
+                            backgroundColor: window.chartColors.black,
+                            borderColor: window.chartColors.black,
+                            data:dataSet4,
+                        }, {
+                            label: 'Distribution',
+                            type:'bar',
+                            fill: false,
+                            backgroundColor: window.chartColors.red,
+                            borderColor: window.chartColors.red,
+                            data:[disSet[0],null,null,null],
+                        }, {
+                            label: 'Distribution',
+                            type:'bar',
+                            fill: false,
+                            backgroundColor: window.chartColors.blue,
+                            borderColor: window.chartColors.blue,
+                            data:[disSet[1],null,null,null],
+                        }, {
+                            label: 'Distribution',
+                            type:'bar',
+                            fill: false,
+                            backgroundColor: window.chartColors.yellow,
+                            borderColor: window.chartColors.yellow,
+                            data:[disSet[2],null,null,null],
+                        }, {
+                            label: 'Distribution',
+                            type:'bar',
+                            fill: false,
+                            backgroundColor: window.chartColors.green,
+                            borderColor: window.chartColors.green,
+                            data:[disSet[3],null,null,null],
+                        }
+                    ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'bottom',
+    					},
+                        title: {
+                            display: true,
+                            text: 'Distribution prices by year'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Year'
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Price'
+                                }
+                            }]
+                        }
+                    }
+                };
+
+                var ctx = document.getElementById('distributionChart').getContext('2d');
+                window.myLine = new Chart(ctx, config);
+                window.myLine.update();
+            }
+
+            function draw(company, year, mode){
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'main:get_graph_data' %}",
+                    data: { 
+                        company:company,
+                        year:year
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        drawSpyderGraph(data.spyder);
+                        if(mode == 0){
+                            drawLineGraph(data.yearly)
+                        }
+                        drawDistributionGraph(data.yearly)
+                    }
+                });
+
+            }
+
+            function init(){
+                let company = $("#company").val();
+                let year = $("#year").val();
+                if(company && year){
+                    draw(company, year, 0);
+                }
+            }
+
+            $( "#company" ).change(function() {
+                let company = this.value;
+                let year = $("#year").val();
+                draw(company, year, 0);
+            });            
+            $( "#year" ).change(function() {
+                let year = this.value;
+                let company = $("#company").val();
+                draw(company, year, 1);
+            });
+
+        });
+    </script>
+  </body>
+</html>
