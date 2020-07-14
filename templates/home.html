@@ -122,8 +122,13 @@
                             target: 'chart-analyser'
                         }
                     }
-                };    
-                var chart = new Chart('spyderChart', {
+                };
+                let canvas = document.getElementById('spyderChart');
+                const context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                if(window.spyder) window.spyder.destroy();
+
+                window.spyder = new Chart('spyderChart', {
                     type: 'radar',
                     data: data,
                     options: options
@@ -217,8 +222,11 @@
                     }
                 };
 
-                var ctx = document.getElementById('lineChart').getContext('2d');
-                window.myLine = new Chart(ctx, config);
+                let canvas = document.getElementById('lineChart');
+                const context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                if(window.myLine) window.myLine.destroy();
+                window.myLine = new Chart(context, config);
                 window.myLine.update();
             }
 
@@ -310,9 +318,12 @@
                     }
                 };
 
-                var ctx = document.getElementById('distributionChart').getContext('2d');
-                window.myLine = new Chart(ctx, config);
-                window.myLine.update();
+                let canvas = document.getElementById('distributionChart');
+                const context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                if(window.distriLine) window.distriLine.destroy();
+                window.distriLine = new Chart(context, config);
+                window.distriLine.update();
             }
 
             function draw(company, year, mode){
