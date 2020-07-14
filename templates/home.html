@@ -224,26 +224,22 @@
 
 
             function drawDistributionGraph(data){
+                var disSet = [];
+                var year = $("#year").val();
                 var dataSet1 = [];
                 var dataSet2 = [];
                 var dataSet3 = [];
                 var dataSet4 = [];
                 var labelSet = [];
-                var disSet = [];
-                var year = $("#year").val();
+                var count = 0;
 
                 data.forEach(element => {
                     dataSet1.push(element.calc[0]);
                     dataSet2.push(element.calc[1]);
                     dataSet3.push(element.calc[2]);
                     dataSet4.push(element.calc[3]);
-                    labelSet.push(element.year);
-                    if(Number(year) == element.year){
-                        disSet.push(element.calc[0]);
-                        disSet.push(element.calc[1]);
-                        disSet.push(element.calc[2]);
-                        disSet.push(element.calc[3]);
-                    }
+                    labelSet.push(element.company);
+                    count ++;
                 });
 
 
@@ -253,56 +249,28 @@
                         labels: labelSet,
                         datasets: [{
                             label: 'PS',
-                            backgroundColor: window.chartColors.black,
-                            borderColor: window.chartColors.black,
+                            backgroundColor: window.chartColors.red,
+                            borderColor: window.chartColors.red,
                             data: dataSet1,
                             fill: false,
                         }, {
                             label: 'LA',
                             fill: false,
-                            backgroundColor: window.chartColors.black,
-                            borderColor: window.chartColors.black,
-                            data:dataSet2,
+                            backgroundColor: window.chartColors.blue,
+                            borderColor: window.chartColors.blue,
+                            data: dataSet2,
                         }, {
                             label: 'PL',
                             fill: false,
-                            backgroundColor: window.chartColors.black,
-                            borderColor: window.chartColors.black,
-                            data:dataSet3,
+                            backgroundColor: window.chartColors.yellow,
+                            borderColor: window.chartColors.yellow,
+                            data: dataSet3,
                         }, {
                             label: 'SA',
                             fill: false,
-                            backgroundColor: window.chartColors.black,
-                            borderColor: window.chartColors.black,
-                            data:dataSet4,
-                        }, {
-                            label: 'Distribution',
-                            type:'bar',
-                            fill: false,
-                            backgroundColor: window.chartColors.red,
-                            borderColor: window.chartColors.red,
-                            data:[disSet[0],null,null,null],
-                        }, {
-                            label: 'Distribution',
-                            type:'bar',
-                            fill: false,
-                            backgroundColor: window.chartColors.blue,
-                            borderColor: window.chartColors.blue,
-                            data:[disSet[1],null,null,null],
-                        }, {
-                            label: 'Distribution',
-                            type:'bar',
-                            fill: false,
-                            backgroundColor: window.chartColors.yellow,
-                            borderColor: window.chartColors.yellow,
-                            data:[disSet[2],null,null,null],
-                        }, {
-                            label: 'Distribution',
-                            type:'bar',
-                            fill: false,
                             backgroundColor: window.chartColors.green,
                             borderColor: window.chartColors.green,
-                            data:[disSet[3],null,null,null],
+                            data: dataSet4,
                         }
                     ]
                     },
@@ -313,7 +281,7 @@
     					},
                         title: {
                             display: true,
-                            text: 'Distribution prices by year'
+                            text: 'Distribution prices by company'
                         },
                         tooltips: {
                             mode: 'index',
@@ -328,7 +296,7 @@
                                 display: true,
                                 scaleLabel: {
                                     display: true,
-                                    labelString: 'Year'
+                                    labelString: 'Company'
                                 }
                             }],
                             yAxes: [{
@@ -362,7 +330,7 @@
                         if(mode == 0){
                             drawLineGraph(data.yearly)
                         }
-                        drawDistributionGraph(data.yearly)
+                        drawDistributionGraph(data.company)
                     }
                 });
 
